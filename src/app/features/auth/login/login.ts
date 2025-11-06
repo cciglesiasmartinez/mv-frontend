@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { signal, computed } from "@angular/core";
+import { signal, computed, WritableSignal } from "@angular/core";
 
 @Component({
   selector: 'app-login',
@@ -7,40 +7,39 @@ import { signal, computed } from "@angular/core";
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
+
 export class Login {
   email = signal('');
   password = signal('');
+
+  loginResult = signal<{token:string, username: string} | null>(null);
 
   isValid = computed(
     () => this.email().trim().length > 0 && this.password().trim().length > 0
   );
 
-  onSubmit() {
-    if (this.isValid()) {
-      console.log('Login con:', { email: this.email(), password: this.password() })
-      // Lógica de login
-      const payload = {
-        email: this.email(),
-        password: this.password()
-      }
-      fetch('http://localhost:8081/auth/login', {
+  async onSubmit() {
+    if (!this.isValid()) {
+      return;
+    }
+    try {
+      const payload = { email: this.email(), password: this.password() };
+      const res = await fetch('http://localhost:8081/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error("Login failed");
-        }
-        return response.json();
-      }).then(data => {
-      console.log('Respuesta del servidor:', data);
-      // guarda token, navega a dashboard, etc.
-      }).catch(error => {
+      });
+      if (!res.ok) {
+        throw new Error('Login fallido');
+      }
+      const data = await res.json();
+      // actualizar signal con los datos
+      console.log(data)
+      this.loginResult.set(data.data);
+    } catch(error) {
       console.error('Error en la petición:', error);
-      // muestra mensaje de error al usuario
-    });
+      this.loginResult.set(null);
     }
   }
+
 }

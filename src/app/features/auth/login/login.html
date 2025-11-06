@@ -1,4 +1,4 @@
-<p>login works!</p>
+<h2>Login</h2>
 <form (submit)="onSubmit(); $event.preventDefault()">
     <div>
         <label for="email">Email:</label>
@@ -8,6 +8,14 @@
         <label for="password">Password:</label>
     <input id="password" type="password" [value]="password()" (input)="password.set($event.target.value)" placeholder="Your password...">
     </div>
-
     <button type="submit" [disabled]="!isValid()">Login</button>
 </form>
+
+@if (loginResult()) {
+<div>
+  <h3>¡Login exitoso!</h3>
+  <p>Token: {{ loginResult()?.token }}</p>
+  <p>Usuario: {{ loginResult()?.username }}</p>
+</div>
+}
+
