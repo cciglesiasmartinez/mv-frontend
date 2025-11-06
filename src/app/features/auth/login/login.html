@@ -1,0 +1,13 @@
+<p>login works!</p>
+<form (submit)="onSubmit(); $event.preventDefault()">
+    <div>
+        <label for="email">Email:</label>
+        <input id="email" type="email" [value]="email()" (input)="email.set($event.target.value)" placeholder="Your email...">
+    </div>
+    <div>
+        <label for="password">Password:</label>
+    <input id="password" type="password" [value]="password()" (input)="password.set($event.target.value)" placeholder="Your password...">
+    </div>
+
+    <button type="submit" [disabled]="!isValid()">Login</button>
+</form>
