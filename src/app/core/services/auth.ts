@@ -46,8 +46,17 @@ export class Auth {
     return this.httpClient.post(`${this.apiUrl}/register`, registerRequest)
   }
 
+  /**
+   * Obtiene el token almacenado.
+   * @returns 
+   */
   getToken(): string | null {
     return this.token;
+  }
+
+  getMe(): Observable<any> {
+    return this.httpClient.get(`${this.apiUrl}/me`, { withCredentials: true })
+    .pipe(tap(response => console.log('Respuesta de getMe:', response)));
   }
 
 }
