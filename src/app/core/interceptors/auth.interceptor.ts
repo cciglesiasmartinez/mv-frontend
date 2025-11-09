@@ -7,11 +7,21 @@ import { throwError } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(Auth);
   const token = auth.getToken();
-  
-  let authReq = req.clone({
-    withCredentials: true, // Asegura que todas las peticiones lleven cookies
-    setHeaders: token ? { Authorization: `Bearer ${token}` } : {} // Añade el token si está disponible
-  });
+
+  // Clona la request original y añade Authorization si hay token
+  let authReq = req;
+  if (token) {
+    authReq = req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` }
+    });
+  }
+
+  // Solo los endpoints de autenticación necesitan cookies
+  const endpointsRequiringCookies = ['/auth/login', '/auth/refresh', '/auth/logout'];
+  const shouldSendCookies = endpointsRequiringCookies.some(url => req.url.includes(url));
+  if (shouldSendCookies) {
+    authReq = authReq.clone({ withCredentials: true });
+  }
 
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
