@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse, RegisterRequest } from '../../features/auth/dto';
+import { LoginRequest, LoginResponse, RefreshAccessTokenResponse, RegisterRequest } from '../../features/auth/dto';
  
 /**
  * Servicio de autenticación para manejar el login y registro de usuarios.
@@ -28,6 +28,14 @@ export class Auth {
   constructor(private httpClient: HttpClient) {}
 
   /**
+   * Obtiene el token almacenado.
+   * @returns `string | null` con el token de autenticación
+   */
+  getToken(): string | null {
+    return this.token;
+  }
+
+  /**
    * Realiza el login de un usuario.
    * @param loginRequest DTO para la solicitud de login
    * @returns `Observable<LoginResponse>` con la respuesta del servidor
@@ -47,16 +55,24 @@ export class Auth {
   }
 
   /**
-   * Obtiene el token almacenado.
-   * @returns 
+   * Obtiene la información del usuario autenticado.
+   * @returns `Observable<any>` con la información del usuario
    */
-  getToken(): string | null {
-    return this.token;
+  getMe(): Observable<any> {
+    return this.httpClient.get(`${this.apiUrl}/me`)
+    .pipe(tap(response => console.log('Respuesta de getMe:', response)));
   }
 
-  getMe(): Observable<any> {
-    return this.httpClient.get(`${this.apiUrl}/me`, { withCredentials: true })
-    .pipe(tap(response => console.log('Respuesta de getMe:', response)));
+  /**
+   * Refresca el token de acceso utilizando el refresh token.
+   * @returns `Observable<RefreshAccessTokenResponse>` con la nueva información del token
+   */
+  getRefreshAccessToken(): Observable<RefreshAccessTokenResponse> {
+    return this.httpClient.post<RefreshAccessTokenResponse>(`${this.apiUrl}/refresh`, {}, { withCredentials: true })
+    .pipe(tap(response => {
+      this.token = response.data.token;
+      console.log('Refresh token, nuevo JWT:', this.token)
+    }))
   }
 
 }
