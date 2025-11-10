@@ -11,9 +11,12 @@
     <button type="submit" [disabled]="!isValid()">Login</button>
 </form>
 
+<form (submit)="onSubmitLogout(); $event.preventDefault()">
+    <button type="submit">Logout</button>
+</form>
+
 @if (loginResult()) {
     <div>
     <p>¡Login exitoso! Bienvenid@ {{ loginResult()?.data?.username }}</p>
     </div>
 }
-

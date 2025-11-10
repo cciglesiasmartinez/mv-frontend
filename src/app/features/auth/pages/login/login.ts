@@ -50,4 +50,15 @@ export class Login {
     }
   }
 
+  async onSubmitLogout(): Promise<void> {
+    console.log("Callin onSubmitLogout");
+    try {
+      const response = await firstValueFrom(this.authService.logout());
+      this.loginResult.set(null);
+      console.log('Usuario deslogueado:', response)
+    } catch (error) {
+      console.error('Error en la petición:', error);
+    }
+  }
+
 }

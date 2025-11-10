@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse, RefreshAccessTokenResponse, RegisterRequest } from '../../features/auth/dto';
+import { LoginRequest, LoginResponse, RefreshAccessTokenResponse, RegisterRequest, GetUserResponse } from '../../features/auth/dto';
  
 /**
  * Servicio de autenticación para manejar el login y registro de usuarios.
@@ -51,16 +51,21 @@ export class Auth {
    * @returns `Observable<any>` con la respuesta del servidor 
    */
   register(registerRequest: RegisterRequest): Observable<any> {
-    return this.httpClient.post(`${this.apiUrl}/register`, registerRequest)
+    return this.httpClient.post(`${this.apiUrl}/register`, registerRequest);
+  }
+
+  logout(): Observable<any> {
+    this.token = null;
+    return this.httpClient.post(`${this.apiUrl}/logout`, {}, {withCredentials: true});
   }
 
   /**
    * Obtiene la información del usuario autenticado.
    * @returns `Observable<any>` con la información del usuario
    */
-  getMe(): Observable<any> {
-    return this.httpClient.get(`${this.apiUrl}/me`)
-    .pipe(tap(response => console.log('Respuesta de getMe:', response)));
+  getUserInfo(): Observable<GetUserResponse> {
+    return this.httpClient.get<GetUserResponse>(`${this.apiUrl}/me`)
+    .pipe(tap(response => console.log('Respuesta de getUserResponse():', response)));
   }
 
   /**

@@ -17,7 +17,7 @@ export class Me {
   error = signal<string | null>(null);
 
   constructor() {
-    this.authService.getMe().subscribe({
+    this.authService.getUserInfo().subscribe({
       next: (data) => this.user.set(data),
       error: (err) => {
         console.error('Error al cargar /me:', err);

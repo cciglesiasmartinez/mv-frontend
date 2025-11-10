@@ -1,1 +1,8 @@
-<p>me works!</p>
+<p>User info</p>
+@if (user()) {
+    <div>
+        <p>ID: {{user()?.data?.id}}</p>
+        <p>Username: {{user()?.data.username}}</p>
+        <p>Email: {{user()?.data.email}}</p>
+    </div>
+}
