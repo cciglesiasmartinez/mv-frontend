@@ -8,6 +8,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(Auth);
   const token = auth.getToken();
 
+  console.log('🔍 INTERCEPTOR para:', req.url);
+  console.log('🎫 Token disponible:', token ? 'SÍ' : 'NO');
+  if (token) {
+    console.log('🎫 Token (primeros 20 chars):', token.substring(0, 20) + '...');
+  }
+  console.log('🍪 withCredentials original:', req.withCredentials); 
+
   // Clona la request original y añade Authorization si hay token
   let authReq = req;
   if (token) {
