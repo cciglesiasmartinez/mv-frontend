@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, provideZonelessChangeDetection } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withDebugTracing } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -12,7 +12,7 @@ import { PLATFORM_ID } from '@angular/core';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideRouter(routes, withDebugTracing()), 
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([authInterceptor])),
