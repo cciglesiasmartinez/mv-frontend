@@ -19,10 +19,10 @@ export class Items {
   constructor(private httpClient: HttpClient) {}
 
   getUserCollection(page: number = 0, size: number = 100): Observable<GetUserCollection> {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-    console.log("Fetching user collection with params:", params.toString());
-    return this.httpClient.get<GetUserCollection>(`${this.apiUrl}/collection`, { params });  
+
+    return this.httpClient.get<GetUserCollection>(`${this.apiUrl}/collection`, { params });
   }
 }

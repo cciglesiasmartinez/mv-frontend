@@ -15,34 +15,35 @@
       <p>Total de películas: <strong>{{ totalElements() }}</strong></p>
     </div>
 
-    @if (items().length > 0) {
+    @if (elements().length > 0) {
       <div class="items-grid">
-        @for (item of items(); track item.id) {
+        @for (element of elements(); track element.id) {
           <div class="item-card">
             <div class="item-cover">
+              <p>LA IMAGEN</p>
               <img 
-                [src]="item.editionCoverPicture" 
-                [alt]="item.filmName"
+                [src]="element.edition_cover_picture" 
+                [alt]="element.film_name"
                 class="cover-image">
             </div>
             <div class="item-details">
-              <h3>{{ item.filmName }}</h3>
+              <h3>Pelicula (titulo){{ element.film_name }}</h3>
               <div class="item-meta">
-                <p><strong>Año:</strong> {{ item.editionReleaseYear }}</p>
-                <p><strong>País:</strong> {{ item.editionCountry }}</p>
-                <p><strong>Formato:</strong> {{ item.editionFormat }}</p>
-                <p><strong>Packaging:</strong> {{ item.editionPackaging }}</p>
+                <p><strong>Año:</strong> {{ element.edition_release_year }}</p>
+                <p><strong>País:</strong> {{ element.edition_country }}</p>
+                <p><strong>Formato:</strong> {{ element.edition_format }}</p>
+                <p><strong>Packaging:</strong> {{ element.edition_packaging }}</p>
               </div>
               <div class="item-conditions">
-                <p><strong>Caja:</strong> {{ item.itemCaseCondition }}</p>
-                <p><strong>Disco:</strong> {{ item.itemMediaCondition }}</p>
+                <p><strong>Caja:</strong> {{ element.item_case_condition }}</p>
+                <p><strong>Disco:</strong> {{ element.item_media_condition }}</p>
               </div>
-              @if (item.itemComments) {
+              @if (element.item_comments) {
                 <div class="item-comments">
-                  <p><strong>Notas:</strong> {{ item.itemComments }}</p>
+                  <p><strong>Notas:</strong> {{ element.item_comments }}</p>
                 </div>
               }
-              <p class="item-date">Añadido: {{ item.itemAddedDate | date: 'dd/MM/yyyy' }}</p>
+              <p class="item-date">Añadido: {{ element.item_added_date | date: 'dd/MM/yyyy' }}</p>
             </div>
           </div>
         }

@@ -2,6 +2,10 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
+    path: '',
+    renderMode: RenderMode.Prerender  // Index es estático y público
+  },
+  {
     path: 'login',
     renderMode: RenderMode.Prerender  // Login es estático
   },
@@ -11,14 +15,14 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'items/**',
-    renderMode: RenderMode.Server  // ← DINÁMICO: se renderiza según request
+    renderMode: RenderMode.Client  // ← Rutas autenticadas: solo cliente
   },
   {
     path: 'me',
-    renderMode: RenderMode.Server  // Requiere autenticación
+    renderMode: RenderMode.Client  // Requiere autenticación: solo cliente
   },
   {
     path: '**',
-    renderMode: RenderMode.Server  // Todo lo demás, dinámico
+    renderMode: RenderMode.Client  // Por defecto, cliente
   }
 ];

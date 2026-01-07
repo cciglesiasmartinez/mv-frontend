@@ -17,7 +17,7 @@ export class Auth {
   private readonly apiUrl = 'http://localhost:8081/auth';
 
   /**
-   * Token de autenticación almacenado.
+   * Token de autenticación almacenado en memoria.
    */
   private token: string | null = null;
 
@@ -28,11 +28,19 @@ export class Auth {
   constructor(private httpClient: HttpClient) {}
 
   /**
-   * Obtiene el token almacenado.
+   * Obtiene el token almacenado en memoria.
    * @returns `string | null` con el token de autenticación
    */
   getToken(): string | null {
     return this.token;
+  }
+
+  /**
+   * Verifica si el usuario está autenticado.
+   * @returns `boolean` true si hay token
+   */
+  isAuthenticated(): boolean {
+    return this.getToken() !== null;
   }
 
   /**
@@ -42,7 +50,9 @@ export class Auth {
    */
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     return this.httpClient.post<LoginResponse>(`${this.apiUrl}/login`, 
-      loginRequest, { withCredentials: true }).pipe(tap(response => { this.token = response.data.token; }));
+      loginRequest, { withCredentials: true }).pipe(tap(response => { 
+        this.token = response.data.token;
+      }));
   }
  
   /**
@@ -64,8 +74,7 @@ export class Auth {
    * @returns `Observable<any>` con la información del usuario
    */
   getUserInfo(): Observable<GetUserResponse> {
-    return this.httpClient.get<GetUserResponse>(`${this.apiUrl}/me`)
-    .pipe(tap(response => console.log('Respuesta de getUserResponse():', response)));
+    return this.httpClient.get<GetUserResponse>(`${this.apiUrl}/me`);
   }
 
   /**
@@ -76,8 +85,7 @@ export class Auth {
     return this.httpClient.post<RefreshAccessTokenResponse>(`${this.apiUrl}/refresh`, {}, { withCredentials: true })
     .pipe(tap(response => {
       this.token = response.data.token;
-      console.log('Refresh token, nuevo JWT:', this.token)
     }))
   }
-
+  
 }

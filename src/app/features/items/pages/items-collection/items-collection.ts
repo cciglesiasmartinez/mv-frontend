@@ -1,23 +1,22 @@
-import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, inject, PLATFORM_ID, signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { signal } from '@angular/core';
 import { Items } from '@core/services/items';
 import { GetUserCollection } from '../../dto';
 
 interface ItemElement{
   id: string;
-  filmId: string;
-  editionId: string;
-  editionCoverPicture: string;
-  filmName: string;
-  editionReleaseYear: number;
-  editionCountry: string;
-  editionFormat: string;
-  editionPackaging: string;
-  itemCaseCondition: string;
-  itemMediaCondition: string;
-  itemComments: string;
-  itemAddedDate: string;
+  film_id?: string;
+  edition_id: string;
+  edition_cover_picture: string;
+  film_name: string;
+  edition_release_year: string | number;
+  edition_country: string;
+  edition_format: string;
+  edition_packaging: string;
+  item_case_condition: string;
+  item_media_condition: string;
+  item_comments: string;
+  item_added_date: string;
 }
 
 @Component({
@@ -31,9 +30,10 @@ export class ItemsCollection implements OnInit {
 
   private itemsService = inject(Items);
   private platformId = inject(PLATFORM_ID);
+  private isClient = isPlatformBrowser(this.platformId);
 
-  items = signal<ItemElement[]>([]);
-  loading = signal(false);
+  elements = signal<ItemElement[]>([]);
+  loading = signal(true);  // Inicia en true
   error = signal<string | null>(null);
 
   currentPage = signal(0);
@@ -44,13 +44,8 @@ export class ItemsCollection implements OnInit {
   hasPrevious = signal(false);
 
   ngOnInit(): void {
-    console.log('🎯 ngOnInit ejecutándose');
-    console.log('🔍 Platform:', isPlatformBrowser(this.platformId) ? 'Browser' : 'Server');
-    // Sólo inicializa la carga en el navegador, no en SSR
-    if(isPlatformBrowser(this.platformId)) {
+    if (this.isClient) {
       this.loadCollection();
-    } else {
-      this.loading.set(true);
     }
   }
 
@@ -60,17 +55,19 @@ export class ItemsCollection implements OnInit {
 
     this.itemsService.getUserCollection(this.currentPage(), this.pageSize()).subscribe({
       next: (response: GetUserCollection) => {
-        this.items.set(response.data.elements);
-        this.totalElements.set(response.data.totalElements);
-        this.totalPages.set(response.data.totalPages);
-        this.hasNext.set(response.data.hasNext);
-        this.hasPrevious.set(response.data.hasPrevious);
+        this.elements.set(response.data.elements);
+        this.totalElements.set(response.data.total_elements || 0);
+        this.totalPages.set(response.data.total_pages || 0);
+        this.hasNext.set(response.data.has_next || false);
+        this.hasPrevious.set(response.data.has_previous || false);
       },
       error: (err) => {
         this.error.set('Error al cargar la colección de ítems.');
         console.error('Error fetching user collection:', err);
       },
-      complete: () => { this.loading.set(false); }
+      complete: () => { 
+        this.loading.set(false);
+      }
     });
   }
 
